@@ -66,5 +66,5 @@ The machine learning model (Logistic Regression) is pre-trained on a bank market
 1. Ensure you have the training data (`bank.csv`) in the project root.
 2. Run the training script:
    ```
-   python train_model.py
+   python model.py
    ```
