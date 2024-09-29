@@ -1,5 +1,27 @@
 import React, { useState } from 'react';
 import { Button, TextField, Select, MenuItem, FormControl, InputLabel, Container, Typography, Paper, Grid, Box } from '@mui/material';
+import { styled } from '@mui/material/styles';
+
+const StyledSelect = styled(Select)(({ theme }) => ({
+  '& .MuiOutlinedInput-notchedOutline': {
+    borderColor: 'rgba(0, 0, 0, 0.23)',
+  },
+  '&:hover .MuiOutlinedInput-notchedOutline': {
+    borderColor: 'rgba(0, 0, 0, 0.87)',
+  },
+  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+    borderColor: theme.palette.primary.main,
+  },
+}));
+
+const StyledFormControl = styled(FormControl)(({ theme }) => ({
+  '& .MuiInputLabel-outlined': {
+    transform: 'translate(14px, 16px) scale(1)',
+  },
+  '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
+    transform: 'translate(14px, -6px) scale(0.75)',
+  },
+}));
 
 const App = () => {
   const [prediction, setPrediction] = useState(null);
@@ -28,14 +50,20 @@ const App = () => {
   };
 
   const renderDropdown = (name, label, options) => (
-    <FormControl fullWidth>
-      <InputLabel>{label}</InputLabel>
-      <Select name={name} value={formData[name]} onChange={handleChange}>
+    <StyledFormControl fullWidth>
+      <InputLabel id={`${name}-label`}>{label}</InputLabel>
+      <StyledSelect
+        labelId={`${name}-label`}
+        name={name}
+        value={formData[name]}
+        onChange={handleChange}
+        label={label}
+      >
         {options.map((option) => (
           <MenuItem key={option} value={option}>{option}</MenuItem>
         ))}
-      </Select>
-    </FormControl>
+      </StyledSelect>
+    </StyledFormControl>
   );
 
   const renderField = (name, label, type = 'text', props = {}) => (
@@ -50,6 +78,25 @@ const App = () => {
     />
   );
 
+  const formFields = [
+    { left: { name: 'age', label: 'Age', type: 'number', props: { inputProps: { min: 0 } } },
+      right: { name: 'job', label: 'Job', options: ['admin.', 'blue-collar', 'entrepreneur', 'housemaid', 'management', 'retired', 'self-employed', 'services', 'student', 'technician', 'unemployed', 'unknown'] } },
+    { left: { name: 'marital', label: 'Marital Status', options: ['divorced', 'married', 'single'] },
+      right: { name: 'education', label: 'Education', options: ['unknown', 'secondary', 'primary', 'tertiary'] } },
+    { left: { name: 'default', label: 'Has Credit in Default?', options: ['yes', 'no'] },
+      right: { name: 'balance', label: 'Balance', type: 'number', props: { helperText: 'Average yearly balance in euros' } } },
+    { left: { name: 'housing', label: 'Has Housing Loan?', options: ['yes', 'no'] },
+      right: { name: 'loan', label: 'Has Personal Loan?', options: ['yes', 'no'] } },
+    { left: { name: 'contact', label: 'Contact Communication Type', options: ['unknown', 'telephone', 'cellular'] },
+      right: { name: 'day', label: 'Day of Month', type: 'number', props: { inputProps: { min: 1, max: 31 }, helperText: 'Last contact day of the month' } } },
+    { left: { name: 'month', label: 'Month', options: ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'] },
+      right: { name: 'duration', label: 'Duration', type: 'number', props: { inputProps: { min: 0 }, helperText: 'Last contact duration in seconds' } } },
+    { left: { name: 'campaign', label: 'Campaign', type: 'number', props: { inputProps: { min: 1, step: 1 }, helperText: 'Number of contacts performed during this campaign' } },
+      right: { name: 'pdays', label: 'Pdays', type: 'number', props: { inputProps: { min: -1 }, helperText: 'Number of days since last contact (-1 means never contacted)' } } },
+    { left: { name: 'previous', label: 'Previous', type: 'number', props: { inputProps: { min: 0 }, helperText: 'Number of contacts before this campaign' } },
+      right: { name: 'poutcome', label: 'Previous Outcome', options: ['unknown', 'failure', 'success'] } },
+  ];
+
   return (
     <Container maxWidth="md">
       <Paper elevation={3} sx={{ p: 4, mt: 4 }}>
@@ -58,54 +105,22 @@ const App = () => {
         </Typography>
         <Box component="form" onSubmit={handleSubmit}>
           <Grid container spacing={3}>
-            <Grid item xs={12} sm={6}>
-              {renderField('age', 'Age', 'number', { inputProps: { min: 0 } })}
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              {renderDropdown('job', 'Job', ['admin.', 'blue-collar', 'entrepreneur', 'housemaid', 'management', 'retired', 'self-employed', 'services', 'student', 'technician', 'unemployed', 'unknown'])}
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              {renderDropdown('marital', 'Marital Status', ['divorced', 'married', 'single'])}
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              {renderDropdown('education', 'Education', ['unknown', 'secondary', 'primary', 'tertiary'])}
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              {renderDropdown('default', 'Has Credit in Default?', ['yes', 'no'])}
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              {renderField('balance', 'Balance', 'number', { helperText: 'Average yearly balance in euros' })}
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              {renderDropdown('housing', 'Has Housing Loan?', ['yes', 'no'])}
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              {renderDropdown('loan', 'Has Personal Loan?', ['yes', 'no'])}
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              {renderDropdown('contact', 'Contact Communication Type', ['unknown', 'telephone', 'cellular'])}
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              {renderField('day', 'Day of Month', 'number', { inputProps: { min: 1, max: 31 }, helperText: 'Last contact day of the month' })}
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              {renderDropdown('month', 'Month', ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'])}
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              {renderField('duration', 'Duration', 'number', { inputProps: { min: 0 }, helperText: 'Last contact duration in seconds' })}
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              {renderField('campaign', 'Campaign', 'number', { inputProps: { min: 1, step: 1 }, helperText: 'Number of contacts performed during this campaign' })}
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              {renderField('pdays', 'Pdays', 'number', { inputProps: { min: -1 }, helperText: 'Number of days since last contact (-1 means never contacted)' })}
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              {renderField('previous', 'Previous', 'number', { inputProps: { min: 0 }, helperText: 'Number of contacts before this campaign' })}
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              {renderDropdown('poutcome', 'Previous Outcome', ['unknown', 'failure', 'success'])}
-            </Grid>
+            {formFields.map((pair, index) => (
+              <Grid item xs={12} key={index}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} sm={6}>
+                    {pair.left.options
+                      ? renderDropdown(pair.left.name, pair.left.label, pair.left.options)
+                      : renderField(pair.left.name, pair.left.label, pair.left.type, pair.left.props)}
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    {pair.right.options
+                      ? renderDropdown(pair.right.name, pair.right.label, pair.right.options)
+                      : renderField(pair.right.name, pair.right.label, pair.right.type, pair.right.props)}
+                  </Grid>
+                </Grid>
+              </Grid>
+            ))}
           </Grid>
           <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
             <Button type="submit" variant="contained" color="primary">
